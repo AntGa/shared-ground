@@ -1,0 +1,12 @@
+# Rust build output
+/target
+
+# Web build output
+/dist
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.sw?
