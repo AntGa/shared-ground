@@ -1,34 +1,51 @@
 # Vision
 
-Shared Ground is a working title. It is a 2D pixel-art platformer with a
-branching story, built as a long-running passion project with no deadline. It
-ships in two parts:
+Shared Ground is a working title. It is a 2D pixel-art co-op puzzle platformer
+for two players, built as a long-running passion project with no deadline.
 
-1. **A solo prequel.** One character. This is where the movement, abilities and
-   puzzles are learned, by the player and by the author. It is the first thing
-   that ships.
-2. **A two-player online co-op campaign.** The main game. It builds on
-   everything the prequel teaches and adds a partner.
-
-The prequel being first is deliberate: it is a complete, shippable game that
-needs no networking, and it forces the core of the game to exist before the
-hardest technical problem is touched.
+It is the author's second game, so it is deliberately a normal one: two
+characters who need each other to get through rooms, no plot. The story is
+parked (see the end of this document) and can be layered on later, because no
+system depends on it.
 
 ## The game
 
-### Movement and abilities
+### Movement
 
-Tight, authored platforming in the spirit of Celeste. Movement is the
-foundation and gets the most attention.
+Tight controls in the spirit of Celeste: coyote time, jump buffering, variable
+jump height, a dash. Celeste describes how the movement _feels_, not how hard
+the rooms are.
 
-On top of running and jumping, the character gains tools. The current list:
+**Difficulty is It Takes Two level.** Forgiving jumps, generous checkpoints,
+and the challenge is coordinating with your partner, not pixel-perfect inputs.
 
-- **Dash**
-- **Grappling hook**
-- More to be decided in a dedicated abilities spar
+Both characters share the same base movement, so neither player feels like the
+weaker one:
 
-Abilities are unlocked over the course of the game, and the world, the
-dialogue and the puzzles all react to which ones you have.
+- Run, jump, wall jump, dash
+- Interact: push and pull boxes, use switches and terminals
+- Carry small objects, and hand them to your partner
+- Boost your partner up, and pull them up a ledge
+
+### Split tools
+
+On top of the shared movement, the two characters get **complementary tools
+that are useless alone**, in the way It Takes Two gives one player a hammer and
+the other nails. Each pair is a prototype first and earns its place in a
+playtest. Candidates:
+
+| One character                                      | The other                                      |
+| -------------------------------------------------- | ---------------------------------------------- |
+| **Throw**: launches the partner far                | **Glide**: steers in the air after a throw     |
+| **Light**: reveals paths that only exist when lit  | **Reach**: small and fast, fits gaps           |
+| **Hold**: keeps heavy doors and platforms in place | **Retrieve**: carries keys and items through   |
+| **Shield**: blocks hazards for a short time        | **Sneak**: unnoticed by enemies while shielded |
+
+Throw and glide is prototyped first. The grappling hook is still a candidate
+tool, but no longer the main focus.
+
+One small new mechanic per level set is the rhythm: introduce it safely,
+develop it, twist it, finish with a set piece that uses it fully.
 
 ### Puzzles and interactables
 
@@ -40,88 +57,62 @@ dialogue and the puzzles all react to which ones you have.
 
 ### Co-op
 
-Each player has their own screen. Depending on the scene, the two players are
-either:
+Each player has their own screen: split screen on one machine, their own
+window online. Depending on the room, the two players are either:
 
 - **In the same room**, cooperating directly, or
 - **In different rooms that affect each other.** A key, a switch or a puzzle in
   one player's room changes something in the other's, so players have to
   communicate what they can see and do.
 
-The solo prequel uses the same mechanics with one character, which is why the
-co-op campaign is an addition rather than a different game.
+Voice chat helps but is never required. A ping ("here") and a countdown (act on
+the same beat) are built in, after Portal 2's co-op.
 
-### Story
+When a player dies in a shared room, only they respawn and puzzle objects keep
+their state. Both players can vote to reset the room.
 
-Characters who talk, and a story that branches on player choices. Roughly two
-hours or more of play across both parts.
+### The demo level: dialogue and voice
 
-Dialogue happens in two ways, mixed per scene:
+Building systems is part of why this project exists, and the dialogue system is
+one of the ones the author wants to build. It gets a fixed target so it does
+not grow without content: **a demo level** with a few rooms, two or three NPCs
+and a small self-contained situation, no plot.
 
-- **While you play.** Characters comment and react without stopping you
-- **Stop-and-talk conversations**, for the scenes that need them
+The demo decides what the dialogue system has to do, and nothing more:
 
-Characters react to what you actually did, not only to where you are. See the
-dialogue section of `01-architecture.md` for how.
+- An NPC who comments while you play, without stopping you
+- A stop-and-talk conversation
+- An NPC who reacts to something you actually did, not only to where you are
+- One choice that changes something later in the level
 
-In co-op, each player has their own cast of NPCs and makes their own story
-choices. Choices come in three kinds:
+It is built for one player first. The data model already gives each player
+their own dialogue slot, so two players is a later step, not a rewrite.
 
-- **Private.** Affects only your own character and relationships
-- **Echo.** One player's choice changes the other player's world. The other
-  player often does not know it was a choice, and whether to tell them over
-  voice chat is up to the player
-- **Joint.** Both players choose and the combination matters. Kept for big
-  moments, especially the ending
-
-Neither player sees the other's dialogue by default. What players choose to
-tell each other is part of the story.
-
-Branching budget: many small choices stored as facts, reactive lines instead of
-branches, and only a few structural forks in the whole campaign. Every voiced
-line multiplies across branches, so this keeps recording sessions possible.
-
-The story is provisional and nothing in it is locked, including who the two
-characters are to each other. Working premise: a game about grief and moving
-on, with a hopeful ending. Two people were in an accident; one died and one is
-in a coma. The game is set in a dream world built from their shared life, one
-chapter per memory, each chapter an everyday place scaled up and made strange.
-The lost one wants the survivor to wake up, which means letting go. Early
-chapters are warm and cozy, later ones eerie.
-
-Ability ideas that came out of this, also provisional: a shared core (run,
-jump, dash), the grapple as the survivor's "holding on", a fading ability for
-the lost one that grows as they disappear, and one small mechanic per chapter.
-
-Inspirations: It Takes Two, Up, Orpheus and Eurydice, Eternal Sunshine of the
-Spotless Mind, Brothers: A Tale of Two Sons, Spiritfarer, To the Moon. A literal
-past and present premise (one place, two times) was considered and set aside
-because realistic settings limit level design.
-
-None of the systems depend on these choices. Story is revisited once the
-mechanics are playable.
-
-The author does not consider themselves a writer, so the plan is to get
-movement on screen first and develop the story alongside the mechanics, not
-before them.
-
-### Voice acting
-
-Friends will voice the characters. Every line of dialogue has a stable id, and
-recordings are looked up by that id. A line with no recording shows as text, so
-voice work can happen in any order, whenever people are free, without blocking
-anything.
+**Voice acting, for fun.** Friends voice the demo's lines. Every line has a
+stable id, and recordings are looked up by that id. The fallback chain is
+recording, then a babble voice (a short pitched sound per syllable, as in
+Celeste and Animal Crossing), then silent text. Recording can happen in any
+order, whenever people are free, without blocking anything.
 
 ## Art direction
 
-**Final target: pixel art**, rendered at a low fixed resolution and scaled up by
-a whole number. The exact resolution (320x180 or 480x270 are the candidates) is
-decided in the architecture spar.
+**Final target: pixel art** at 320x180 with 8 pixel tiles, scaled up by a whole
+number (see `01-architecture.md`).
+
+**The look: a few colours per level set.** Three or four colours each, after
+Downwell, Return of the Obra Dinn and Minit. The palette carries the mood, and
+a palette swap shader is the first shader to learn.
+
+- **Each player's screen can have its own palette.** Same room, same
+  collision, different colours. It is presentation only, so it never touches
+  the simulation, and it is something almost no co-op game does
+- **The gameplay layer never changes style.** Solids, hazards, interactables
+  and the players stay high contrast and consistent everywhere. Mood lives in
+  the background, the palette and later the lighting
 
 **Until then: shapes.** Coloured rectangles and lines, in the spirit of Thomas
-Was Alone. These are placeholders, but they are placeholders on purpose: the
-gameplay never depends on the art, so the shapes can stay for as long as
-learning the art takes.
+Was Alone. They are placeholders on purpose: the gameplay never depends on the
+art, so the shapes can stay for as long as learning the art takes.
 
 The art skills (Aseprite for pixel art and animation, shaders for lighting and
 procedural effects) are learned in parallel with the game, not before it.
@@ -139,16 +130,13 @@ character looks from how it moves. These are later goals, not starting points.
 
 Bevy builds to both from the same code.
 
-## The shippable targets
+## The shippable target
 
-**Target 1, the solo prequel on the web.** Movement, abilities, puzzles, a
-story with dialogue and at least one meaningful choice, start to finish, in the
-browser.
+**A co-op puzzle platformer on the web.** A short set of co-op levels with
+same-room and cross-room puzzles, two players online, plus the demo level with
+dialogue and voices. A link two friends can open and finish together.
 
-**Target 2, the co-op campaign.** Two players online, same-room and cross-room
-puzzles, the main story. Browser and Steam.
-
-Everything past those is optional.
+Everything past that is optional: Steam, more levels, the story.
 
 ## Non-goals
 
@@ -161,6 +149,7 @@ Deliberately out of scope, so they stop being open questions:
 - Procedurally generated levels. Levels are handcrafted. Procedural _art_ and
   effects are in scope
 - Writing an ECS from scratch. Bevy provides it
+- A plot, for now. See below
 
 ## Why this project exists
 
@@ -183,5 +172,50 @@ ones, especially the love of building systems.
 - **Make content early.** Fear of redoing levels is not a reason to delay them.
   "The rest of the game will never be ready"
 - **Always have something playable**, even if most of it is rough
-- **Systems serve content.** A system is built when a level needs it, not
-  because building it is fun. See the rule at the bottom of `02-roadmap.md`
+- **Systems serve content.** Building systems is allowed to be fun, but each one
+  is built for a level that needs it. The demo level is that level for
+  dialogue. See the rule at the bottom of `02-roadmap.md`
+
+## Parked: the story
+
+Set aside so the game can be made first. Kept here so the thinking is not lost.
+Nothing in it is decided.
+
+**Directions explored:**
+
+- **Codependency and moving on.** The most recent direction. Two characters,
+  "the one who leans" and "the one who holds". Leaning on your partner is
+  rewarded early, then starts to cost the holder something that only shows on
+  the holder's screen (colour draining, music thinning, weaker movement). The
+  leaner's screen looks fine. Later the two learn to help each other from a
+  distance, and moving on is a choice both players make, good for both
+- **Grief and a coma dream.** The earlier premise: two people in an accident,
+  one died, one in a coma, an abstract dream space built from their shared life,
+  one chapter per memory. Set aside for the direction above
+
+**Ideas that would come back with a story:**
+
+- An abstract dream space, one level set per stage of the relationship, each
+  with its own palette and shape language. Memory carried by a few recognisable
+  objects rather than real places
+- Per-player palettes that drift apart over the game, then briefly match
+- A control mapping taught for hours, then used for emotion (Brothers)
+- Letting go as an action the player chooses when to take (Spiritfarer)
+- Swapping roles partway, so each player has been both characters
+- Revisiting a level later, decayed: recognisable, changed, and cheap to build
+
+**Dialogue design that would come back with a story:** in co-op, each player
+has their own NPCs and choices, and neither sees the other's dialogue. Choices
+are private (your own character), echo (changes the other player's world,
+often without them knowing it was a choice) or joint (both choose, kept for big
+moments). A small branching budget: many small choices stored as facts,
+reactive lines instead of branches, few structural forks, so voice recording
+stays possible.
+
+**Set aside along the way:** everyday places scaled up (needs art for real
+locations, and it is the premise of It Takes Two); a literal past and present
+setting (realistic places limit level design); the grapple as the main ability;
+a partner who becomes the ground the other stands on.
+
+Inspirations: It Takes Two, Brothers: A Tale of Two Sons, Spiritfarer, Inside,
+Gris, Journey, Portal 2's co-op, Unravel Two.

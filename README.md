@@ -1,16 +1,16 @@
 # Shared Ground
 
-Working title. A 2D pixel-art platformer with tight, Celeste-style movement,
-tools like a dash and a grappling hook, puzzles, and a branching story voiced
-by friends. It ships as a solo prequel first, then a two-player online co-op
-campaign.
+Working title. A 2D pixel-art co-op puzzle platformer for two players: tight,
+Celeste-style movement, complementary tools that only work together, and
+non-combat puzzles. Local co-op first, then online, plus a demo level with
+dialogue voiced by friends.
 
 Built in Rust on Bevy. Movement, collision, dialogue and rendering are hand
 written, because building those systems is the point.
 
 ## Status
 
-Phase 0. Docs only so far; the Cargo workspace comes next. See [docs/02-roadmap.md](docs/02-roadmap.md).
+Phase 0. The Cargo workspace is set up; next is a window with a moving square. See [docs/02-roadmap.md](docs/02-roadmap.md).
 
 ## Stack
 

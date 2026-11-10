@@ -30,15 +30,15 @@ you to learn them from a list.
 
 Two different kinds of thing get written the same way:
 
-| Written        | Means                            | Kind                     |
-| -------------- | -------------------------------- | ------------------------ |
-| `<C-o>`        | Hold **Ctrl**, press **o**       | Chord, keys together     |
-| `<C-v>`        | Hold **Ctrl**, press **v**       | Chord                    |
-| `<CR>`         | **Enter**                        | Single key               |
-| `<Esc>`        | **Escape**                       | Single key               |
-| `<leader>`     | **Space** in this config         | Single key               |
-| `grd`          | **g**, then **r**, then **d**    | Sequence, one after another |
-| `<leader>sf`   | **Space**, then **s**, then **f**| Sequence                 |
+| Written      | Means                             | Kind                        |
+| ------------ | --------------------------------- | --------------------------- |
+| `<C-o>`      | Hold **Ctrl**, press **o**        | Chord, keys together        |
+| `<C-v>`      | Hold **Ctrl**, press **v**        | Chord                       |
+| `<CR>`       | **Enter**                         | Single key                  |
+| `<Esc>`      | **Escape**                        | Single key                  |
+| `<leader>`   | **Space** in this config          | Single key                  |
+| `grd`        | **g**, then **r**, then **d**     | Sequence, one after another |
+| `<leader>sf` | **Space**, then **s**, then **f** | Sequence                    |
 
 Sequences are typed in order like a word, with about a second of timeout. Type
 them at normal speed.
@@ -107,17 +107,17 @@ missing or malformed.
 Neovim reserves the `gr` prefix for language-server actions. Think "**g**o to
 **r**elated thing".
 
-| Keys  | Does                                                        |
-| ----- | ----------------------------------------------------------- |
-| `grd` | **Go to definition**                                        |
-| `grr` | **Find references**, every place it is used                 |
-| `grn` | **Rename** it safely across the whole project               |
-| `gra` | **Code action**, offers fixes such as auto-import           |
-| `gri` | Go to implementation                                        |
-| `grt` | Go to type definition                                       |
-| `K`   | Hover: show type and documentation                          |
-| `gO`  | Symbols in this file                                        |
-| `gW`  | Symbols across the project                                  |
+| Keys  | Does                                              |
+| ----- | ------------------------------------------------- |
+| `grd` | **Go to definition**                              |
+| `grr` | **Find references**, every place it is used       |
+| `grn` | **Rename** it safely across the whole project     |
+| `gra` | **Code action**, offers fixes such as auto-import |
+| `gri` | Go to implementation                              |
+| `grt` | Go to type definition                             |
+| `K`   | Hover: show type and documentation                |
+| `gO`  | Symbols in this file                              |
+| `gW`  | Symbols across the project                        |
 
 Example. In `packages/game/src/systems/movement.ts` you see:
 
@@ -214,16 +214,16 @@ Use all three of these, for different things.
 This is the part that is genuinely better in the editor than in a terminal,
 because you are staging code while reading it with full LSP context.
 
-| Keys          | Does                                        |
-| ------------- | ------------------------------------------- |
-| `]c` / `[c`   | Jump to next / previous changed hunk        |
-| `<leader>hp`  | Preview the hunk under the cursor           |
-| `<leader>hs`  | **Stage** this hunk (works on a visual selection too) |
-| `<leader>hr`  | **Reset** this hunk, discarding it          |
-| `<leader>hS`  | Stage the whole buffer                      |
-| `<leader>hb`  | Blame this line                             |
-| `<leader>hd`  | Diff this file against the index            |
-| `<leader>tb`  | Toggle inline blame for every line          |
+| Keys         | Does                                                  |
+| ------------ | ----------------------------------------------------- |
+| `]c` / `[c`  | Jump to next / previous changed hunk                  |
+| `<leader>hp` | Preview the hunk under the cursor                     |
+| `<leader>hs` | **Stage** this hunk (works on a visual selection too) |
+| `<leader>hr` | **Reset** this hunk, discarding it                    |
+| `<leader>hS` | Stage the whole buffer                                |
+| `<leader>hb` | Blame this line                                       |
+| `<leader>hd` | Diff this file against the index                      |
+| `<leader>tb` | Toggle inline blame for every line                    |
 
 The review workflow: `]c` to the next change, `<leader>hp` to look at it,
 `<leader>hs` to stage it or `<leader>hr` to throw it away. Repeat to the bottom
@@ -251,51 +251,51 @@ and you are already learning enough. gitsigns plus lazygit covers everything
 with nothing new to memorise. Revisit fugitive in a few months if the split
 starts to annoy you.
 
-## 7. A mode for editing level files
+## 7. Editing ASCII test grids
 
-ASCII level grids want different settings from code. The important one is
-`virtualedit`, without which you cannot place a character to the right of a
-short line, which makes grid editing impossible.
+Real levels are made in LDtk, and `.ldtk` files are never edited by hand. The
+ASCII grids live inside `sim` tests, as string literals that build `ChapterData`
+for collision and movement tests:
 
-Add this to `~/dotfiles/config/nvim/lua/custom/plugins/` as `levels.lua`:
+    // illustration
+    let room = room_from_ascii(
+        "
+        ..........
+        ..P.......
+        ######....
+        ",
+    );
 
-    -- Level files for the Shared Ground project are ASCII grids. Editing a grid
-    -- wants different settings from editing prose or code, mostly so that the
-    -- cursor can move into the empty space to the right of a short line.
-    vim.filetype.add {
-      pattern = {
-        ['.*/levels/.*%.txt'] = 'sglevel',
-      },
-    }
+Grids want different settings from code. The important one is `virtualedit`,
+without which you cannot place a character to the right of a short line, which
+makes grid editing impossible. Because the grids sit inside `.rs` files, a
+filetype rule cannot switch it on, so use a toggle instead.
 
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = 'sglevel',
-      callback = function()
-        -- Move the cursor anywhere, including past the end of a line. Without
-        -- this you cannot place a block to the right of a short row.
-        vim.opt_local.virtualedit = 'all'
-        -- Show the current column, so vertical alignment across the grid is
-        -- visible while editing.
-        vim.opt_local.cursorcolumn = true
-        vim.opt_local.wrap = false
-        vim.opt_local.list = false
-        vim.opt_local.expandtab = false
-      end,
-    })
+Add this to `~/dotfiles/config/nvim/lua/custom/plugins/` as `grids.lua`:
+
+    -- Toggle grid editing for ASCII grids inside test code. Moves the cursor
+    -- anywhere, including past the end of a line, and shows the current column
+    -- so vertical alignment across the grid is visible.
+    vim.keymap.set('n', '<leader>tg', function()
+      local on = vim.opt_local.virtualedit:get()[1] ~= 'all'
+      vim.opt_local.virtualedit = on and 'all' or ''
+      vim.opt_local.cursorcolumn = on
+      vim.notify('grid editing ' .. (on and 'on' or 'off'))
+    end, { desc = '[T]oggle [G]rid editing' })
 
 ### The technique this unlocks
 
 **Visual block mode**, `<C-v>`. It selects a rectangle rather than lines, which
 is exactly the shape of a tile grid operation.
 
-| Keys                     | Does                                          |
-| ------------------------ | --------------------------------------------- |
-| `<C-v>` then `j`/`k`     | Extend the block down or up                   |
-| `<C-v>` block then `r#`  | Replace every character in the block with `#` |
-| `<C-v>` block then `d`   | Delete a column of the grid                   |
-| `<C-v>` block then `I`   | Insert text at the start of every line, `<Esc>` to apply |
-| `<C-v>` block then `A`   | Append at the end of every line               |
-| `r` in normal mode       | Replace one character without entering insert |
+| Keys                    | Does                                                     |
+| ----------------------- | -------------------------------------------------------- |
+| `<C-v>` then `j`/`k`    | Extend the block down or up                              |
+| `<C-v>` block then `r#` | Replace every character in the block with `#`            |
+| `<C-v>` block then `d`  | Delete a column of the grid                              |
+| `<C-v>` block then `I`  | Insert text at the start of every line, `<Esc>` to apply |
+| `<C-v>` block then `A`  | Append at the end of every line                          |
+| `r` in normal mode      | Replace one character without entering insert            |
 
 Building a vertical wall is `<C-v>`, `10j`, `r#`. Editing a platformer level in
 visual block mode is one of the genuinely satisfying things vim does.
@@ -341,10 +341,10 @@ possible drill.
 - `10<C-a>` adds ten
 - `mm` to set mark `m`, backtick-`m` to jump back to it
 
-### Phase 1, authoring levels
+### Phase 1, writing test grids
 
 - `<C-v>` visual block, `r`, `I`, `A`
-- `virtualedit` from section 7
+- `<leader>tg` grid editing toggle from section 7
 
 ### Phase 2 to 3, multi-file work
 
@@ -371,27 +371,27 @@ possible drill.
 
 ## 10. Quick reference
 
-| Keys           | Does                                    |
-| -------------- | --------------------------------------- |
-| `-`            | oil, parent directory                   |
-| `<leader>e`    | oil in a float                          |
-| `<leader>sf`   | Find files                              |
-| `<leader>sg`   | Grep the project                        |
-| `<leader><leader>` | Switch buffer                       |
-| `<leader>sk`   | Search keymaps                          |
-| `<leader>sh`   | Search help                             |
-| `<leader>sr`   | Resume last search                      |
-| `grd`          | Go to definition                        |
-| `grr`          | Find references                         |
-| `grn`          | Rename                                  |
-| `gra`          | Code action                             |
-| `K`            | Hover docs                              |
-| `<C-o>` `<C-i>`| Jump back and forward                   |
-| `<leader>q`    | Diagnostics to quickfix                 |
-| `<leader>f`    | Format buffer                           |
-| `<leader>th`   | Toggle inlay hints                      |
-| `]c` `[c`      | Next and previous git hunk              |
-| `<leader>hs`   | Stage hunk                              |
-| `<leader>hp`   | Preview hunk                            |
-| `<C-v>`        | Visual block mode                       |
-| `<C-a>` `<C-x>`| Increment and decrement a number        |
+| Keys               | Does                             |
+| ------------------ | -------------------------------- |
+| `-`                | oil, parent directory            |
+| `<leader>e`        | oil in a float                   |
+| `<leader>sf`       | Find files                       |
+| `<leader>sg`       | Grep the project                 |
+| `<leader><leader>` | Switch buffer                    |
+| `<leader>sk`       | Search keymaps                   |
+| `<leader>sh`       | Search help                      |
+| `<leader>sr`       | Resume last search               |
+| `grd`              | Go to definition                 |
+| `grr`              | Find references                  |
+| `grn`              | Rename                           |
+| `gra`              | Code action                      |
+| `K`                | Hover docs                       |
+| `<C-o>` `<C-i>`    | Jump back and forward            |
+| `<leader>q`        | Diagnostics to quickfix          |
+| `<leader>f`        | Format buffer                    |
+| `<leader>th`       | Toggle inlay hints               |
+| `]c` `[c`          | Next and previous git hunk       |
+| `<leader>hs`       | Stage hunk                       |
+| `<leader>hp`       | Preview hunk                     |
+| `<C-v>`            | Visual block mode                |
+| `<C-a>` `<C-x>`    | Increment and decrement a number |

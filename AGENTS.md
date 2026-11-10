@@ -1,9 +1,9 @@
 # Shared Ground
 
-Working title. A 2D pixel-art platformer in Rust and Bevy: tight Celeste-style
-movement, abilities like a dash and a grappling hook, non-combat puzzles, and a
-branching story. A solo prequel ships first, then a two-player online co-op
-campaign.
+Working title. A 2D pixel-art co-op puzzle platformer in Rust and Bevy for two
+players: tight Celeste-style movement at It Takes Two difficulty, complementary
+tools that need both players, and non-combat puzzles. Local co-op first, then
+online. A demo level exercises dialogue and voice acting; the story is parked.
 
 This is a deliberate learning project. The author comes from web development
 (HTML, CSS, TypeScript) and is learning Rust, game development, systems design
@@ -73,7 +73,8 @@ Before suggesting a crate, check it supports the pinned Bevy version.
 
 ## Current phase
 
-Phase 0: a square that moves, in Rust. The TypeScript scaffold has been
-removed and the repository holds only docs, waiting for the author to create
-the Cargo workspace. `docs/04-neovim.md` still describes the TypeScript setup in
-places.
+Phase 0: a square that moves, in Rust. The Cargo workspace exists
+(`crates/sim`, `crates/game`, Bevy `=0.19.1`) and the author is on step 3, a
+window and a coloured rectangle. The step list with progress is in
+`docs/02-roadmap.md`. `docs/04-neovim.md` still describes the old TypeScript
+setup in places.

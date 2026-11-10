@@ -9,7 +9,7 @@ moved into the decided sections with the reasoning.
 | Concern             | Choice                                        | Status                |
 | ------------------- | --------------------------------------------- | --------------------- |
 | Language            | Rust                                          | Decided               |
-| Framework           | Bevy, version pinned                          | Decided               |
+| Framework           | Bevy, pinned at `=0.19.1`                     | Decided               |
 | ECS                 | Bevy's                                        | Decided               |
 | Movement, collision | Hand written, Celeste style                   | Decided               |
 | Level editor        | LDtk                                          | Decided               |
@@ -46,6 +46,20 @@ months. The rules:
 - Before adding a third party crate, check its compatibility table against the
   pinned Bevy version
 - When a tutorial does not compile, check which Bevy version it targets first
+- Upgrade between phases, never during one. The checkpoints are the start of
+  Phase 2 and the start of Phase 5
+
+**Current pin: `=0.19.1`.** Bevy 0.20 came out on 2026-10-08, but the crates
+this project needs were still on 0.19 or older when the workspace was created:
+bevy_ggrs, bevy_seedling and bevy-inspector-egui support 0.19, and
+bevy_matchbox was still on 0.18. bevy_seedling's 0.20 port (issue #134) waits on
+a change in Firewheel, its audio engine. Because of that, the transport uses
+`matchbox_socket` directly rather than bevy_matchbox.
+
+Worth having from 0.20 at the Phase 5 checkpoint: sprite materials, useful for
+lighting. Things to watch when upgrading: observer syntax (`On<Insert<T>>`),
+`iter_many` returning a `Result`, and weak system ordering, which the
+simulation must not use.
 
 ## The simulation and presentation split
 
@@ -289,10 +303,47 @@ collision and movement are tested without the editor.
 
 ### Parser
 
-Hand written with `serde`, reading only the layers needed. Chosen over
-`bevy_ecs_ldtk` because the conversion step exists anyway, it is a contained
-first Rust exercise, and it removes a crate that must track Bevy versions. Tile
-art rendering is decided when art arrives.
+Generated, not hand written. LDtk publishes a JSON Schema for its project
+format. quicktype turns that schema into Rust structs with `serde`
+`Deserialize` derives, and loading a project becomes one
+`serde_json::from_slice`. The hand written part is the converter from those
+structs to `ChapterData`, which is where the real work is anyway: walking
+IntGrid arrays, grouping connected cells and assigning `LinkId`s in a fixed
+order.
+
+- The generated file lives in `game` and is committed. It is never edited by
+  hand; when it is wrong, regenerate it
+- **The LDtk editor version is pinned**, like Bevy. The schema changes between
+  LDtk releases, so the generated file records which version it came from, and
+  upgrading LDtk means regenerating and fixing the converter
+- The generated code has no Bevy dependency, so Bevy upgrades never touch it
+
+Chosen over `bevy_ecs_ldtk` because that crate spawns Bevy entities straight
+from the level, which is the shape `sim` must never see, and because it has to
+track Bevy versions. Chosen over prebuilt crates (`ldtk`, `ldtk_rust`) because
+their bundled schemas lag behind the editor. Chosen over hand written structs
+because matching a format you do not control is not the interesting Rust here.
+Tile art rendering is decided when art arrives.
+
+### Alternatives considered
+
+Because the converter isolates `sim`, the editor is just an input and swapping
+it later costs one converter. The choice came down to editor ergonomics and one
+question: is the world made of tiles or of shapes?
+
+- **Tiles**, which is the decision. Celeste style collision against a tile
+  array, meaning carried by IntGrid values. LDtk is built for this
+- **Shapes**, curves and slopes you stand on, would favour Blender (aarthificial
+  designs splines in Blender for Astortion in Bevy) but would replace the whole
+  collision plan. Revisit only if the game wants curved or sloped ground
+- **Tiled**: general and well supported (`bevy_ecs_tiled`), but clunkier
+  auto-tiling and no references between maps, which cross-room co-op needs
+- **Blenvy and other Blender component workflows**: 3D tools that export Bevy
+  components, so level data arrives shaped as Bevy entities
+- **Bevy scenes or a Bevy editor**: same problem, and not mature
+- **ASCII files**: kept for `sim` tests, but no entity fields, no references
+  and no chapter overview
+- **An in-game editor**: a second project. Only if a level ever needs it
 
 ## Dialogue and world state
 

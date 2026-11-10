@@ -37,7 +37,7 @@ Systems read the input and derive everything else inside the simulation. "Ticks
 since jump was pressed", used by jump buffering, is simulation state, not
 something the client sends.
 
-The simulation always takes input per player, even in the solo prequel. A
+The simulation always takes input per player, even with one player. A
 session is fully described by a seed plus each player's list of inputs, which
 is what makes replays and rollback possible.
 
@@ -48,6 +48,10 @@ one way), never appearance. Appearance comes from auto-tiling rules.
 
 Entity identifiers in LDtk use `PascalCase` (`Box`, `Door`, `Trigger`). Event
 and fact ids used in entity fields use `snake_case` (`on_enter_lab`).
+
+The LDtk types in `game` are generated from LDtk's JSON Schema with quicktype.
+Do not edit that file by hand; regenerate it when the pinned LDtk version
+changes. `.ldtk` files are edited in LDtk only, never in a text editor.
 
 ## Naming
 
